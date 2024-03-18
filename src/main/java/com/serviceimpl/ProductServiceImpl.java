@@ -7,8 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dto.ProductDTO;
+import com.entity.CartItem;
+import com.entity.OrderedCartItems;
 import com.entity.Product;
 import com.exception.ProductNotFoundException;
+import com.repository.CartItemRepository;
+import com.repository.OrderedCartItemsRepository;
 import com.repository.ProductRepository;
 import com.service.ProductService;
 
@@ -17,6 +21,12 @@ public class ProductServiceImpl implements ProductService {
 
 	@Autowired
 	private ProductRepository productRepository;
+	
+	@Autowired
+	private CartItemRepository cartItemRepository;
+	
+	@Autowired
+	private OrderedCartItemsRepository orderCartItemsRepository;
 
 	public ProductDTO addProduct(ProductDTO productDTO) {
 		Product product = new Product();
@@ -74,6 +84,22 @@ public class ProductServiceImpl implements ProductService {
 
 	public boolean deleteProduct(int id) {
 
+		Product product= productRepository.findById(id).get();
+		List<CartItem> cartItems=cartItemRepository.findByProduct(product);
+ 
+		for(CartItem item: cartItems) {
+			item.setProduct(null);
+			item.setQuantity(0);
+			cartItemRepository.save(item);
+		}
+		
+		List<OrderedCartItems> orderedItems=orderCartItemsRepository.findByProduct(product);
+ 
+		for(OrderedCartItems item: orderedItems) {
+			item.setProduct(null);
+			item.setQuantity(0);
+			orderCartItemsRepository.save(item);
+		}
 		productRepository.deleteById(id);
 		return true;
 

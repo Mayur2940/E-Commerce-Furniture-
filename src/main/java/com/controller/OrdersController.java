@@ -3,15 +3,21 @@ package com.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dto.OrdersDTO;
+import com.entity.Orders;
+import com.entity.Status;
 import com.serviceimpl.OrdersServiceImpl;
 
 @RestController
@@ -46,5 +52,11 @@ public class OrdersController {
 	@GetMapping("/findBycustId/{custId}")
 	public List<OrdersDTO> getOrderCustId(@PathVariable(value = "custId") int custId) {
 		return ordersServiceImpl.getOrderCustomerId(custId);
+	}
+	
+	@PutMapping("/status/{orderId}")
+    public String updateOrderStatus(@PathVariable("orderId") int orderId) {
+		return ordersServiceImpl.orderStatus(orderId);
+		
 	}
 }

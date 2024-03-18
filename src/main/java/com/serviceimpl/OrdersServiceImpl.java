@@ -46,7 +46,7 @@ public class OrdersServiceImpl implements OrdersService {
 			Orders order = new Orders();
 			order.setCart(cart);
 			order.setDate(LocalDateTime.now());
-			order.setStatus(Status.pending);
+			order.setStatus(Status.Pending);
 
 			ordersRepository.save(order);
 
@@ -71,14 +71,17 @@ public class OrdersServiceImpl implements OrdersService {
 			orderedCart.setOrderid(order.getOrderId());
 			orderedCart.setTotalPrice(cart.getTotalPrice());
 			orderedCart.setTotalQuantity(cart.getTotalQuantity());
+			order.setOrderedCart(orderedCart);
 
+//			ordersRepository.save(order);
 			orderedCartRepository.save(orderedCart);
 
 			ordersDTO.setCart(mapCartToDTO(order.getCart()));
 			ordersDTO.setDate(order.getDate());
 			ordersDTO.setOrderId(order.getOrderId());
 			ordersDTO.setStatus(order.getStatus());
-
+			ordersDTO.setOrderedCartDTO(mapCartToDTO(orderedCart));
+			
 			cartRepository.deleteCartItemsByCartId(cart.getId());
 			cart.setTotalQuantity(0);
 			cart.setTotalPrice(0);
@@ -124,6 +127,7 @@ public class OrdersServiceImpl implements OrdersService {
 			orderDTO.setDate(order.getDate());
 			orderDTO.setOrderId(order.getOrderId());
 			orderDTO.setStatus(order.getStatus());
+			orderDTO.setOrderedCartDTO(mapCartToDTO(order.getOrderedCart()));
 
 			ordersDTOs.add(orderDTO);
 
@@ -246,4 +250,16 @@ public class OrdersServiceImpl implements OrdersService {
 		return cartitemDTOs;
 	}
 
+	@Override
+	public String orderStatus(int orderId) {
+		 Orders order = ordersRepository.findById(orderId)
+		            .orElseThrow(() -> new IllegalArgumentException("Order not found with id: " + orderId));
+		 
+		            order.setStatus(Status.Accepted);
+		            ordersRepository.save(order);
+		            return "Order with ID " + orderId + " has been accepted.";
+		        
+		    }
+
+	
 }

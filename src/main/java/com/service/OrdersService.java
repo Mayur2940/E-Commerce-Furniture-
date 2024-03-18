@@ -15,4 +15,6 @@ public interface OrdersService {
 	public List<OrdersDTO> findAl();
 
 	public List<OrdersDTO> getOrderCustomerId(int customerId);
+	
+	public String orderStatus(int orderId);
 }
